@@ -1,0 +1,8 @@
+{% if item.proxy_pass_config is defined %}
+  # --- ProxyPass -------------------------------------------------------------
+{% for items in item.proxy_pass_config %}
+  ProxyPreserveHost {{ items.preserve_host }}
+  ProxyPass {{ items.src }} {{ items.dest }}
+  ProxyPassReverse {{ items.src }} {{ items.dest }}
+{% endfor %}
+{% endif %}

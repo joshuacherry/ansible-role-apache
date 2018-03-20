@@ -1,0 +1,18 @@
+# tasks/remove_default.yml
+---
+
+- name: Disabling default host
+  file:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: reload apache
+
+- name: Removing default host
+  file:
+    dest: /etc/apache2/sites-available/000-default.conf
+    state: absent
+
+- name: Removing default-ssl host
+  file:
+    dest: /etc/apache2/sites-available/default-ssl.conf
+    state: absent

@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+
+{% if item.ssl is defined %}
+SSLStaplingCache shmcb:${APACHE_RUN_DIR}/ssl_stapling_cache(128000)
+<VirtualHost {{ item.ip|default('*') }}:{{item.ssl.port|default(443)}}>
+
+{% include "site/body.j2" %}
+
+{% include "site/ssl.j2" %}
+
+{% include "site/proxypass.j2" %}
+
+</VirtualHost>
+{% endif %}
+
+<VirtualHost {{ item.ip|default('*') }}:{{item.port|default(80)}}>
+
+{% include "site/body.j2" %}
+
+{% if item.ssl is not defined %}
+{% include "site/proxypass.j2" %}
+{% endif %}
+
+</VirtualHost>

@@ -1,0 +1,28 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: openssl
+    - role: ansible-role-apache
+  vars:
+    openssl_certs_path: /etc/pki/tls/certs
+    openssl_keys_path: /etc/pki/tls/private
+    openssl_self_signed:
+      - { name: '{{ ansible_fqdn }}',
+          country: 'US',
+          state: 'NY',
+          city: 'Troy',
+          organization: 'Rensselaer Polytechnic Institute',
+          unit: 'School of Humanities, Arts, and Social Sciences',
+          email: 'hass-admin@rpi.edu',
+          days: 3650
+      }
+  tasks:
+    - name: create blank index file for testing
+      file:
+        path: "/var/www/{{ ansible_fqdn }}/htdocs/index.html"
+        owner: root
+        group: root
+        state: touch
+        mode: 0755
+      changed_when: false

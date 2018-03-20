@@ -1,0 +1,107 @@
+# defaults/main.yml
+---
+
+# package name (version)
+apache_package: apache2
+# ports to listen to
+apache_ports: [80]
+# ssl ports to listen to
+apache_ssl_ports: [443]
+# enabled/disabled modules
+apache_modules:
+  - { id: ssl, state: present }
+  - { id: mime, state: present }
+  - { id: headers, state: present }
+  - { id: rewrite, state: present }
+  - { id: autoindex, state: present }
+  - { id: deflate, state: present }
+  - { id: expires, state: present }
+  - { id: filter, state: present }
+  - { id: include, state: present }
+  - { id: setenvif, state: present }
+# enable/disable configurations
+# These can be found in templates/apache2/conf-availabile directory
+# of this role
+apache_confs:
+  - { id: "security.conf", state: absent }
+  - { id: "server_software_information.conf", state: present }
+  - { id: "file_access.conf", state: present }
+# enabled/disabled sites
+apache_sites:
+  - id: "{{ ansible_fqdn }}"
+    name: "{{ ansible_fqdn }}"
+    state: present
+    webroot: "/var/www/{{ ansible_fqdn }}/htdocs"
+    port: 80
+    add_webroot: true
+    server_status_ip:
+      - { ip: '127.0.0.0/8' }
+      - { ip: '::1' }
+    aliases: []
+    rules:
+      - character_encodings.conf
+      - custom_errors.conf
+      - media_types.conf
+      - rewrite_engine.conf
+      - rewrite_http_to_https.conf
+      - rewrite_www.conf
+      - strict-transport-security.conf
+    ssl:
+      port: 443
+      key_name: "{{ ansible_fqdn }}"
+      cert_name: "{{ ansible_fqdn }}"
+#   proxy_pass_config:
+#     - { preserve_host: 'on',
+#         src: '/',
+#         dest: 'http://{{ ansible_fqdn }}:5601/'
+#       }
+#   template: path/to/template.j2
+#   directories_access:
+#     - directory: "/var/www/{{ ansible_fqdn }}/protected/"
+#       order: "allow,deny"
+#       rules:
+#         - { rule: 'Allow from 127.0.0.0/24 # Description' }
+#   files_access:
+#     - file: "protected.php"
+#       order: "allow,deny"
+#       rules:
+#         - { rule: 'Allow from 127.0.0.0/24 # Description' }
+#   append: |
+#     # Append anything else in a multiline variable here
+#       <Location /ldapprotected>
+#         AuthLDAPBindDN "CN=something,DC=test,DC=com"
+#         AuthLDAPBindPassword "PASSWORD_HERE"
+#         AuthLDAPURL "ldap://test.com/DC=test,DC=com?sAMAccountName?sub?(objectClass=*)"
+#         AuthType Basic
+#         AuthName "Restricted Access"
+#         AuthBasicProvider ldap
+#         AuthUserFile /dev/null
+#         Require ldap-filter memberof:1.2.840.113556.1.4.1941:=CN=GROUP_NAME,DC=test,DC=com
+#         AuthLDAPMaxSubGroupDepth 3
+#       </Location>
+
+# path to certificates
+apache_certs_path: /etc/pki/tls/certs
+# path to keys
+apache_keys_path: /etc/pki/tls/private
+# DHparams file name
+apache_dhparam_file: 'dhparams.pem'
+# DHparams localtion
+apache_dhparam_location: '/etc/apache2/ssl'
+# DHparams size
+apache_dhparam_bytes: 2048
+# Server Name
+apache_server_name: "{{ ansible_fqdn }}"
+# start on boot
+apache_service_enabled: 'yes'
+# current state: started, stopped
+apache_service_state: started
+# remove the default host
+apache_remove_default: 'yes'
+
+# Security Settings
+
+# set to one of:  Full | OS | Minimal | Minor | Major | Prod
+apache_server_tokens: 'Prod'
+# set to one of:  On | Off | EMail
+apache_server_signiture: 'Off'

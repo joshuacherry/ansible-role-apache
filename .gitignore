@@ -1,0 +1,8 @@
+.vagrant/*
+*.retry
+*pyc
+.pytest_cache
+.cache
+__pycache__
+.molecule
+.tox

@@ -1,0 +1,36 @@
+# tasks/manage_sites.yml
+---
+
+- name: Creating webroots
+  file:
+    dest: "{{ item.webroot }}"
+    state: directory
+  when: item.add_webroot is defined and item.add_webroot
+  with_items: '{{ apache_sites }}'
+
+- name: Creating sites
+  template:
+    src: "{{ item.template|default('apache2/sites-available/site.j2') }}"
+    dest: "/etc/apache2/sites-available/{{ item.id }}.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: '{{ apache_sites }}'
+  notify: reload apache
+
+- name: Enabling sites
+  file:
+    src: "/etc/apache2/sites-available/{{ item.id }}.conf"
+    dest: "/etc/apache2/sites-enabled/{{ item.id }}.conf"
+    state: link
+  when: item.state is not defined or item.state == 'present'
+  with_items: '{{ apache_sites }}'
+  notify: restart apache
+
+- name: Disabling sites
+  file:
+    src: "/etc/apache2/sites-enabled/{{ item.id }}.conf"
+    state: absent
+  when: item.state is defined and item.state == 'absent'
+  with_items: '{{ apache_sites }}'
+  notify: reload apache

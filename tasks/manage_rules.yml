@@ -1,0 +1,21 @@
+# tasks/manage_rules.yml
+---
+
+- name: Create Rules Folder
+  file:
+    path: /etc/apache2/rules
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+
+- name: Create Rules Files
+  template:
+    src: '{{ item.src }}'
+    dest: '/etc/apache2/rules/{{ item.path }}'
+    owner: root
+    group: root
+    mode: "0644"
+  with_filetree: "apache2/rules/"
+  when: item.state == 'file'
+  notify: restart apache

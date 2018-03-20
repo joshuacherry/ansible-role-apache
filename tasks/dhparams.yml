@@ -1,0 +1,17 @@
+# tasks/dhparams.yml
+---
+- name: Create dhparams directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - '{{ apache_dhparam_location }}'
+- name: Create SSL dhparams file
+  command: "{{ item.command }} creates={{ item.file }}"
+  with_items:
+    - { command: 'openssl dhparam -out {{ apache_dhparam_location }}/{{ apache_dhparam_file }} {{ apache_dhparam_bytes }}',
+        file: '{{ apache_dhparam_location }}/{{ apache_dhparam_file }}'
+    }

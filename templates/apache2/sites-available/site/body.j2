@@ -1,0 +1,67 @@
+  ServerName {{ item.name }}
+  DocumentRoot {{ item.webroot }}
+  {% for value in item.aliases|default([]) %}
+  ServerAlias {{ value }}
+  {% endfor %}
+
+  # --- directories -----------------------------------------------------------
+
+  <Directory {{ item.webroot }}>
+    AllowOverride All
+    Options FollowSymLinks
+    Require all granted
+    Satisfy Any
+  </Directory>
+
+{% if item.server_status_ip is defined %}
+  <Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+{% for subnet in item.server_status_ip %}
+    Require ip {{ subnet.ip }}
+{% endfor %}
+  </Location>
+{% endif %}
+
+{% if item.directories_access is defined %}
+{% for location in item.directories_access %}
+  <Directory {{ location.directory }}>
+    Order {{ location.order }}
+{% for each in location.rules %}
+    {{ each.rule }}
+{% endfor %}
+  </Directory>
+{% endfor %}
+{% endif %}
+
+{% if item.files_access is defined %}
+{% for location in item.files_access %}
+  <Directory {{ location.file }}>
+    Order {{ location.order }}
+{% for each in location.rules %}
+    {{ each.rule }}
+{% endfor %}
+  </Directory>
+{% endfor %}
+{% endif %}
+
+  # --- Rule Imports ----------------------------------------------------------
+
+{% if item.rules is defined %}
+{% for rule in item.rules %}
+  Include rules/{{ rule }}
+{% endfor %}
+{% endif %}
+
+  # --- logging ---------------------------------------------------------------
+
+  LogLevel warn
+  ErrorLog  /var/log/apache2/error-{{ item.id }}.log
+  CustomLog /var/log/apache2/access-{{ item.id }}.log timed_combined
+
+  {% if item.append is defined %}
+
+  # --- appended --------------------------------------------------------------
+
+  {{ item.append }}
+  {% endif %}

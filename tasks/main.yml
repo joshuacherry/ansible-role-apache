@@ -1,0 +1,50 @@
+# tasks/main.yml
+---
+- name: Installing packages
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: "yes"
+  with_items:
+    - "{{ apache_package }}"
+
+- name: Configuring apache
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload apache
+  with_items:
+    - apache2/apache2.conf
+    - apache2/ports.conf
+
+- name: Include dhparams Tasks
+  include_tasks: dhparams.yml
+
+- name: Include Default Site Tasks
+  include_tasks: remove_default.yml
+  when: apache_remove_default
+
+- name: Manage Modules
+  apache2_module:
+    state: "{{ item.state }}"
+    name: "{{ item.id }}"
+  with_items: '{{ apache_modules }}'
+  notify: reload apache
+
+- name: Include Manage Confs Tasks
+  include_tasks: manage_confs.yml
+
+- name: Include Manage Rules Tasks
+  include_tasks: manage_rules.yml
+
+- name: Include Manage Sites Tasks
+  include_tasks: manage_sites.yml
+
+- name: Configuring service
+  service:
+    name: apache2
+    state: "{{ apache_service_state }}"
+    enabled: "{{ apache_service_enabled }}"

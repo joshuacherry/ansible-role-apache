@@ -1,0 +1,30 @@
+# tasks/manage_confs.yml
+---
+
+- name: Template files
+  template:
+    src: 'apache2/conf-available/{{ item.id }}'
+    dest: '/etc/apache2/conf-available/{{ item.id }}'
+    owner: root
+    group: root
+    mode: "0644"
+  when: item.state is not defined or item.state == 'present'
+  with_items: '{{ apache_confs }}'
+  notify: reload apache
+
+- name: Enabling Configurations
+  file:
+    src: "/etc/apache2/conf-available/{{ item.id }}"
+    dest: "/etc/apache2/conf-enabled/{{ item.id }}"
+    state: link
+  when: item.state is not defined or item.state == 'present'
+  with_items: '{{ apache_confs }}'
+  notify: reload apache
+
+- name: Disabling Configurations
+  file:
+    path: "/etc/apache2/conf-enabled/{{ item.id }}"
+    state: absent
+  when: item.state is defined and item.state == 'absent'
+  with_items: '{{ apache_confs }}'
+  notify: reload apache
