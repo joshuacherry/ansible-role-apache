@@ -10,17 +10,6 @@ TESTINFRA_HOSTS = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-def test_hosts_file(host):
-    """
-    Tests that the hosts file exists
-    """
-    file = host.file('/etc/hosts')
-
-    assert file.exists
-    assert file.user == 'root'
-    assert file.group == 'root'
-
-
 def test_apache2_is_installed(host):
     """
     Tests that apache2 is installed
