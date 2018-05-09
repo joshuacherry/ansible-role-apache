@@ -2,13 +2,17 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/joshuacherry/ansible-role-apache.svg?branch=master)](https://travis-ci.org/joshuacherry/ansible-role-apache)
-![Ansible](https://img.shields.io/badge/ansible-2.4.3-green.svg)
+![Ansible](https://img.shields.io/badge/ansible-2.4.3.0-blue.svg)
+![Ansible](https://img.shields.io/badge/ansible-2.5.0-blue.svg)
 
 Configures [Apache](https://httpd.apache.org/) on an Ubuntu server.
 
 ## Requirements
 
-- Ansible >= 2.4.3
+- Ansible
+  - Tested Versions:
+    - 2.4.3.0
+    - 2.5.0
 
 ## Install
 
