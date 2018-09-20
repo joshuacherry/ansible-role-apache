@@ -20,6 +20,9 @@
 {% for subnet in item.server_status_ip %}
     Require ip {{ subnet.ip }}
 {% endfor %}
+{% if item.proxy_pass_config is defined %}
+  ProxyPass !
+{% endif %}
   </Location>
 {% endif %}
 

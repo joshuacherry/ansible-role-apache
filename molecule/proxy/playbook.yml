@@ -1,0 +1,78 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: openssl
+    - role: ansible-role-apache
+  vars:
+    openssl_certs_path: /etc/pki/tls/certs
+    openssl_keys_path: /etc/pki/tls/private
+    openssl_self_signed:
+      - { name: '{{ ansible_fqdn }}',
+          country: 'US',
+          state: 'NY',
+          city: 'Troy',
+          organization: 'Rensselaer Polytechnic Institute',
+          unit: 'School of Humanities, Arts, and Social Sciences',
+          email: 'hass-admin@rpi.edu',
+          days: 3650
+      }
+    apache_modules:
+      - { id: ssl, state: present }
+      - { id: mime, state: present }
+      - { id: headers, state: present }
+      - { id: rewrite, state: present }
+      - { id: autoindex, state: present }
+      - { id: deflate, state: present }
+      - { id: expires, state: present }
+      - { id: filter, state: present }
+      - { id: include, state: present }
+      - { id: setenvif, state: present }
+      - { id: status, state: present }
+      - { id: proxy, state: present }
+      - { id: proxy_http, state: present }
+    apache_sites:
+      - id: "{{ ansible_fqdn }}_proxy"
+        name: "{{ ansible_fqdn }}_proxy"
+        state: present
+        webroot: "/var/www/{{ ansible_fqdn }}_proxy/htdocs"
+        port: 8080
+        add_webroot: true
+        server_status_ip: []
+        aliases: []
+      - id: "{{ ansible_fqdn }}"
+        name: "{{ ansible_fqdn }}"
+        state: present
+        webroot: "/var/www/{{ ansible_fqdn }}/htdocs"
+        port: 80
+        add_webroot: true
+        server_status_ip:
+          - { ip: '127.0.0.0/8' }
+          - { ip: '::1' }
+        aliases: []
+        rules:
+          - character_encodings.conf
+          - custom_errors.conf
+          - media_types.conf
+          - rewrite_engine.conf
+          - rewrite_http_to_https.conf
+          - rewrite_www.conf
+          - strict-transport-security.conf
+        ssl:
+          port: 443
+          key_name: "{{ ansible_fqdn }}"
+          cert_name: "{{ ansible_fqdn }}"
+        proxy_pass_config:
+          - { preserve_host: 'on',
+              src: '/',
+              dest: 'http://{{ ansible_fqdn }}:8080/'
+          }
+  tasks:
+    - name: create blank index file for testing
+      file:
+        path: "/var/www/{{ ansible_fqdn }}/htdocs/index.html"
+        owner: root
+        group: root
+        state: touch
+        mode: 0755
+      changed_when: false

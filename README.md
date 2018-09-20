@@ -38,7 +38,7 @@ Configures [Apache](https://httpd.apache.org/) on an Ubuntu server.
 
 For the versions available, see the [tags on this repository](https://github.com/joshuacherry/ansible-role-apache/tags).
 
-Additionaly you can see what change in each version in the [CHANGELOG.md](CHANGELOG.md) file.
+Additionally you can see what change in each version in the [CHANGELOG.md](CHANGELOG.md) file.
 
 ## Role variables
 
