@@ -2,11 +2,10 @@
 ---
 - name: Installing packages
   apt:
-    pkg: "{{ item }}"
+    pkg:
+      - "{{ apache_package }}"
     state: present
     update_cache: "yes"
-  with_items:
-    - "{{ apache_package }}"
 
 - name: Configuring apache
   template:

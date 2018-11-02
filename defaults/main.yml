@@ -97,7 +97,7 @@ apache_service_enabled: 'yes'
 # current state: started, stopped
 apache_service_state: started
 # remove the default host
-apache_remove_default: 'yes'
+apache_remove_default: true
 
 # Security Settings
 
