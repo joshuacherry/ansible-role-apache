@@ -2,9 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/joshuacherry/ansible-role-apache.svg?branch=master)](https://travis-ci.org/joshuacherry/ansible-role-apache)
-![Ansible](https://img.shields.io/badge/ansible-2.5.0-blue.svg)
-![Ansible](https://img.shields.io/badge/ansible-2.6.1-blue.svg)
-![Ansible](https://img.shields.io/badge/ansible-2.7.0-blue.svg)
+![Ansible](https://img.shields.io/badge/ansible-2.8-blue.svg)
+![Ansible](https://img.shields.io/badge/ansible-2.9-blue.svg)
 
 Configures [Apache](https://httpd.apache.org/) on an Ubuntu server.
 
@@ -12,9 +11,8 @@ Configures [Apache](https://httpd.apache.org/) on an Ubuntu server.
 
 - Ansible
   - Tested Versions:
-    - 2.5.0
-    - 2.6.1
-    - 2.7.0
+    - 2.8
+    - 2.9
 
 ## Install
 
@@ -27,6 +25,7 @@ Configures [Apache](https://httpd.apache.org/) on an Ubuntu server.
 | OS            |
 | :------------ |
 | Ubuntu 16.04  |
+| ubuntu 18.04  |
 
 - Manage custom apache configurations
 - Enable/Disable apache modules
