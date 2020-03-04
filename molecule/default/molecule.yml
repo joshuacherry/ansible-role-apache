@@ -5,10 +5,14 @@ dependency:
     role-file: requirements.yml
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: molecule/default/yaml-lint.yml
+# https://github.com/willthames/ansible-lint/issues/315
+# Avoid this issue with 'with_filetree'
+# use -x flag with ANSIBLE0015
+lint: |
+  set -e
+  yamllint -c molecule/default/yaml-lint.yml .
+  ansible-lint -x ANSIBLE0015
+  flake8
 platforms:
   - name: instance
     image: joshuacherry/docker-${MOLECULE_DISTRO:-ubuntu1604}-ansible
@@ -20,18 +24,9 @@ platforms:
       - /lib/modules:/lib/modules:ro
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-    options:
-      x:
-        # https://github.com/willthames/ansible-lint/issues/315
-        # Avoid this issue with 'with_filetree'
-        - ANSIBLE0015
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
 scenario:
   name: default
 verifier:
   name: testinfra
-  lint:
-    name: flake8
